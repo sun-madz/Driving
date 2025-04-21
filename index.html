@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css">
+  <title>Driving Theory Quiz</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+    .question { margin-bottom: 20px; }
+    .options label { display: block; margin: 5px 0; }
+    #submitBtn, #nextQuizBtn { margin-top: 20px; padding: 10px 20px; }
+    #score { font-weight: bold; margin-top: 20px; }
+    .correct-answer { background-color: #e6ffe6; padding: 5px; }
+    .wrong-answer { background-color: #ffe6e6; padding: 5px; }
+    .correction { color: green; margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Driving Theory Quiz</h1>
+  <div id="quiz"></div>
+  <button id="submitBtn">Submit Quiz</button>
+  <div id="score"></div>
+  <button id="nextQuizBtn" style="display:none">Next Quiz</button>
+
+  <script>
+    const allQuestions = [
+      {
+        question: "The most successful means of reducing death and injuries on the roads worldwide is to:",
+        options: {
+          A: "Drive slowly at all times",
+          B: "Take more driving lessons",
+          C: "Use seat belts",
+          D: "Don't drink and drive"
+        },
+        correct: "D"
+      },
+      {
+        question: "Hazard warning lights should be operated if:",
+        options: {
+          A: "You see traffic congestion ahead",
+          B: "When reversing",
+          C: "You have broken down or are involved in an accident",
+          D: "You are speeding"
+        },
+        correct: "C"
+      },
+      {
+        question: "When reversing and you are unable to see clearly behind, you should:",
+        options: {
+          A: "Switch on your hazard warning light",
+          B: "Sound your horn",
+          C: "Get someone else to direct you",
+          D: "Use your mirror"
+        },
+        correct: "D"
+      },
+      {
+        question: "The first thing you should do before slowing down is:",
+        options: {
+          A: "Look round",
+          B: "Signal",
+          C: "Use the mirror",
+          D: "Change your gear"
+        },
+        correct: "C"
+      },
+      {
+        question: "Where there are double lines in the middle of the road and the line nearest to you is broken, you may:",
+        options: {
+          A: "Cross it to overtake if you can do so safely",
+          B: "Cross it only if you wish to turn right",
+          C: "Not cross it in any circumstances",
+          D: "Oncoming vehicle can overtake"
+        },
+        correct: "A"
+      },
+      {
+        question: "The vehicle in front is wandering across the road. What should you do?",
+        options: {
+          A: "Drop back to a safe distance",
+          B: "Overtake as quickly as you can",
+          C: "Stop and telephone the police",
+          D: "Sound your horn to warn him"
+        },
+        correct: "A"
+      },
+      {
+        question: "You must only reverse:",
+        options: {
+          A: "From a main road into a side road",
+          B: "In a one-way street",
+          C: "From a side road into a main road",
+          D: "On a roundabout"
+        },
+        correct: "A"
+      },
+      {
+        question: "When waiting to turn out of a side road into a main road, you should:",
+        options: {
+          A: "Wait until there is a safe gap in the traffic stream",
+          B: "Wait until the road is totally clear",
+          C: "Wait until another motorist waves you on",
+          D: "Put the front of your car into the main road until another motorist waves you on"
+        },
+        correct: "A"
+      },
+      {
+        question: "Which rule should always be followed by a safe and courteous driver?",
+        options: {
+          A: "Never sound the horn",
+          B: "Never overtake on the left",
+          C: "Watch out for the young and elderly",
+          D: "Overtake on a bend"
+        },
+        correct: "C"
+      },
+      {
+        question: "Where there is a single unbroken white line along the middle of the road, you must:",
+        options: {
+          A: "Not overtake",
+          B: "Not park",
+          C: "Not cross the line except when you wish to turn right or avoid obstructions",
+          D: "Give way to vehicles overtaking from the opposite direction"
+        },
+        correct: "A"
+      },
+      {
+        question: "Pedestrians most likely to be killed or injured on the road are:",
+        options: {
+          A: "20 to 35 years of age",
+          B: "Under 20 and over 60 years of age",
+          C: "35 to 60 years of age",
+          D: "25 to 50 years of age"
+        },
+        correct: "B"
+      },
+      {
+        question: "When passing animals, you should always:",
+        options: {
+          A: "Be especially careful not to frighten them",
+          B: "Sound the horn",
+          C: "Pass in a low gear",
+          D: "Pass as quickly as possible"
+        },
+        correct: "A"
+      },
+      {
+        question: "When driving along a one-way street, you may overtake:",
+        options: {
+          A: "Only on the right",
+          B: "Only on the left",
+          C: "Either side",
+          D: "Not overtake at all"
+        },
+        correct: "C"
+      },
+      {
+        question: "The first thing you should do before overtaking is:",
+        options: {
+          A: "Look around",
+          B: "Signal",
+          C: "Use the mirror",
+          D: "Position to overtake"
+        },
+        correct: "C"
+      },
+      {
+        question: "Before moving off, you should always:",
+        options: {
+          A: "Look round as well as using the mirrors",
+          B: "Use the door-mounted mirror",
+          C: "Only use the central mirror",
+          D: "Signal first"
+        },
+        correct: "A"
+      },
+      {
+        question: "Pedestrians have priority at pedestrian crossings when:",
+        options: {
+          A: "They are approaching it", 
+          B: "They are at the kerb side",  
+          C: "Once they have stepped on it",  
+          D: "When the road is not safe to do so" 
+        },
+        correct: "C"
+      },
+      {
+        question: "Where there is an island in the middle of a pedestrian crossing:",
+        options: {
+          A: "The crossing is treated as one continuous crossing", 
+          B: "Each half of the crossing is treated as a separate crossing",  
+          C: "It is a crossing of special importance",  
+          D: "It's a place to rest and talk" 
+        },
+        correct: "B"
+      },
+      {
+        question: "You are going to turn left at the road junction ahead. There are some pedestrians crossing the road. What should you do?",
+        options: {
+          A: "Slow down and give way to them", 
+          B: "Sound your horn",  
+          C: "Flash your lights",  
+          D: "Go straight ahead" 
+        },
+        correct: "A"
+      },
+      {
+        question: "The advice given to pedestrians when walking along a road with no footpath is:",
+        options: {
+          A: "Walk the way the traffic is going", 
+          B: "Walk on the left-hand side of the road",  
+          C: "Always walk on the outside of bends",  
+          D: "Always walk facing oncoming traffic" 
+        },
+        correct: "D"
+      },
+      {
+        question: "Before moving off from a parked position at the side of the road, you should always signal your intention:",
+        options: {
+          A: "When it is raining", 
+          B: "When it would help other road users",  
+          C: "Never",  
+          D: "Only when parked on the right" 
+        },
+        correct: "B"
+      },
+      {
+        question: "When should you wear your seat belt?",
+        options: {
+          A: "In Victoria", 
+          B: "Only on long journeys",  
+          C: "Always",  
+          D: "Only if you think it necessary" 
+        },
+        correct: "C"
+      },
+      {
+        question: "According to the highway code, before crossing a road, pedestrians are advised to look:",
+        options: {
+          A: "Both ways",
+          B: "Left, right, and left",
+          C: "Right, left, and right",
+          D: "Right and then walk"
+        },
+        correct: "C"
+      },
+      {
+        question: "When walking on a road at night, pedestrians should:",
+        options: {
+          A: "Carry a torch",
+          B: "Wear something white or light-colored",
+          C: "Walk in the same direction as passing traffic",
+          D: "Wear dark clothing"
+        },
+        correct: "B"
+      },
+      {
+        question: "At a roundabout, unless road marking indicates otherwise, you should give way to traffic:",
+        options: {
+          A: "Already on the roundabout",
+          B: "On your immediate right",
+          C: "On your immediate left",
+          D: "On your immediate left and right"
+        },
+        correct: "B"
+      },
+      {
+        question: "You are traveling downhill towards an obstruction. Coming up the hill towards you is a bus. You should:",
+        options: {
+          A: "Expect the bus to give way to you",
+          B: "Flash your lights",
+          C: "Give way to the bus",
+          D: "Sound your horn"
+        },
+        correct: "C"
+      },
+      {
+        question: "Areas of white diagonal stripes painted on the road are intended to:",
+        options: {
+          A: "Prevent vehicles from overtaking",
+          B: "To protect traffic turning right",
+          C: "To protect pedestrians crossing the road",
+          D: "Prevent vehicles from turning left"
+        },
+        correct: "B"
+      },
+      {
+        question: "What is your first duty if you are involved in an accident?",
+        options: {
+          A: "Render assistance",
+          B: "Call the police",
+          C: "Get names of witnesses",
+          D: "Report to Insurance Company"
+        },
+        correct: "A"
+      },
+      {
+        question: "You need a class 2 driving license to drive vehicles of:",
+        options: {
+          A: "Private vehicles up to 1 ton",
+          B: "Commercial pick-up from 1 1/2 tons to 3 tons",
+          C: "Taxis",
+          D: "Commercial vehicles up to 1 1/2 tons"
+        },
+        correct: "A"
+      },
+      {
+        question: "Your pupil is issued with a certificate of competency on passing the driving test. Can this be used as a driver's license?",
+        options: {
+          A: "Yes",
+          B: "No",
+          C: "Only at certain times of the day",
+          D: "Only by class 2 drivers"
+        },
+        correct: "B"
+      },
+      {
+        question: "The purpose of the gear lever is:",
+        options: {
+          A: "To eliminate the need for direct transmission of power to rear wheels",
+          B: "Select the right gear combination in the gearbox",
+          C: "Eliminate the need for changing gear ratios",
+          D: "To gain speed"
+        },
+        correct: "B"
+      },
+      {
+        question: "What does a double broken white line painted across a traffic lane at a junction mean?",
+        options: {
+          A: "A stop line sign",
+          B: "A give way line",
+          C: "The edge of the road",
+          D: "Lane markings"
+        },
+        correct: "B"
+      },
+      {
+        question: "The procedure at a \"Give Way\" sign or marking is:",
+        options: {
+          A: "Stop, then move off when clear",
+          B: "Sound horn, and continue course",
+          C: "Slow down, be ready to stop if necessary",
+          D: "Don't stop as other vehicles should give way to you"
+        },
+        correct: "C"
+      },
+      {
+        question: "Which of the following is true?",
+        options: {
+          A: "Good tyres and brakes can stop within two feet",
+          B: "Time and distance is required to stop a car",
+          C: "A car would be safer if it could stop within two feet",
+          D: "A seat belt is needed to stop the car quickly"
+        },
+        correct: "B"
+      },
+      {
+        question: "If you need to stop the vehicle in an emergency, do you need to check the rearview mirror before braking?",
+        options: {
+          A: "Always",
+          B: "If you have time",
+          C: "No",
+          D: "Yes"
+        },
+        correct: "C"
+      },
+      {
+        question: "When approaching a Roundabout, you should:",
+        options: {
+          A: "Wait for all traffic before entering",
+          B: "Enter provided you don't cause any driver to swerve",
+          C: "Give way to traffic already circulating",
+          D: "Stop to check for traffic, then proceed"
+        },
+        correct: "C"
+      },
+      {
+        question: "The radiator of a vehicle has to be regularly checked for:",
+        options: {
+          A: "Oil level",
+          B: "Water level",
+          C: "Petrol level",
+          D: "Air pressure"
+        },
+        correct: "B"
+      },
+      {
+        question: "How would you indicate to a Police Officer directing traffic at a crossroad you want to go straight ahead?",
+        options: {
+          A: "By sticking your right hand out of the window",
+          B: "By stretching your left hand in the vehicle to the left",
+          C: "By pushing your left hand forward and showing your palm in the windscreen",
+          D: "By putting your right arm through the window and turning it in a circle"
+        },
+        correct: "C"
+      },
+      {
+        question: "What should a driver do if a car cuts in too closely in front of him after overtaking?",
+        options: {
+          A: "Move sharply to the other side",
+          B: "Slow down to increase following distance",
+          C: "Speed up, pass the car and get away from it",
+          D: "Maintain this new following distance so as not to shorten following distance of car behind him"
+        },
+        correct: "B"
+      },
+      {
+        question: "The most important reason for having an adjustable front seat is:",
+        options: {
+          A: "Driver can see further to each side when he moves the seat forward",
+          B: "Sight distance can be lengthened",
+          C: "Allows drivers of different sizes to reach controls",
+          D: "Makes foot room for passengers in back"
+        },
+        correct: "C"
+      },
+      {
+        question: "What is required to be a good driver?",
+        options: {
+          A: "Patience, responsibility, concentration, anticipation",
+          B: "Good behaviour, patience, well built",
+          C: "Patience, drive fast, mechanical knowledge, anticipation",
+          D: "Good behaviour, drive slowly, well built, courage"
+        },
+        correct: "A"
+      },
+      {
+        question: "What is the maximum speed for a vehicle in built-up areas?",
+        options: {
+          A: "35km/h",
+          B: "15km/h",
+          C: "40km/h",
+          D: "20km/h"
+        },
+        correct: "C"
+      },//
+      {
+        question: "What is the overall shortest stopping distance of a vehicle that is travelling at 60km/h?",
+        options: {
+          A: "22.6 metres",
+          B: "36 metres",
+          C: "30 metres",
+          D: "60 metres"
+        },
+        correct: "B"
+      },
+      {
+        question: "When a driver approaches a stop sign on the road, he must:",
+        options: {
+          A: "Stop with his wheel behind the line",
+          B: "Stop over the line if he cannot see because of buildings and hedges",
+          C: "Stop with the car immediately behind the white line inside his half of the road",
+          D: "Slow down, check for traffic and proceed"
+        },
+        correct: "C"
+      },
+      {
+        question: "A single yellow line on the side of the road means:",
+        options: {
+          A: "A vehicle can park for as long as the driver wishes",
+          B: "A vehicle can park for 20 minutes only",
+          C: "No vehicle is allowed to park",
+          D: "A vehicle can park within a certain time only"
+        },
+        correct: "D"
+      },
+      {
+        question: "From the time you see danger ahead to the moment you depress the brake pedal is called:",
+        options: {
+          A: "Stopping time",
+          B: "Braking time",
+          C: "Reaction time",
+          D: "Safety time"
+        },
+        correct: "C"
+      },
+      {
+        question: "What must you do before overtaking another vehicle?",
+        options: {
+          A: "Signal, mirror, course",
+          B: "Mirror, signal, course",
+          C: "Course, mirror, signal",
+          D: "Course, signal, mirror"
+        },
+        correct: "B"
+      },
+      {
+        question: "When driving on a road you notice a vehicle wishes to overtake you. Do you:",
+        options: {
+          A: "Slow down to 20km/h",
+          B: "Speed up",
+          C: "Brake to allow it to pass",
+          D: "Maintain your speed and position on the road"
+        },
+        correct: "D"
+      },
+      {
+        question: "What is the length of time required for someone to report an accident?",
+        options: {
+          A: "12 hours",
+          B: "48 hours",
+          C: "24 hours",
+          D: "36 hours"
+        },
+        correct: "C"
+      },
+      {
+        question: "If your vehicle has had a breakdown, what would be the first thing that you do?",
+        options: {
+          A: "Identify the cause of breakdown",
+          B: "Remove vehicle off the main road to a safe position if possible",
+          C: "Notify the police",
+          D: "Notify the breakdown service"
+        },
+        correct: "B"
+      },
+      {
+        question: "Why should a driver of a vehicle have a knowledge of the basic mechanical principles of a motor car?",
+        options: {
+          A: "To enable him to fix the vehicle",
+          B: "To help others to fix the vehicle",
+          C: "To enable him to recognise and report vehicle problems in good time",
+          D: "To enable him to teach others how to drive"
+        },
+        correct: "C"
+      },
+      {
+        question: "If you are dazzled by approaching headlamps, you should:",
+        options: {
+          A: "Flash your headlights",
+          B: "Slow down or stop",
+          C: "Look away",
+          D: "Keep your headlights on full"
+        },
+        correct: "B"
+      },
+      {
+        question: "At night you must:",
+        options: {
+          A: "Use headlamps at all times on all roads",
+          B: "Use headlamps unless there is street lighting",
+          C: "Use side lights (parking light)",
+          D: "Use headlamps only on main roads"
+        },
+        correct: "A"
+      },
+      {
+        question: "When leaving a roundabout, when would you use a left indicator signal?",
+        options: {
+          A: "When you are level with the exit before the one you intend to take",
+          B: "As you exit",
+          C: "No signal required",
+          D: "Whenever you want to"
+        },
+        correct: "A"
+      },
+      {
+        question: "When red and amber show together on a traffic light, it means:",
+        options: {
+          A: "Proceed if the way is clear",
+          B: "Stop, do not pass through until green shows",
+          C: "Stop as red light will follow",
+          D: "Proceed as green will follow"
+        },
+        correct: "B"
+      },
+      {
+        question: "What does a red light on the traffic light mean?",
+        options: {
+          A: "Stop",
+          B: "Slow down",
+          C: "Go",
+          D: "Standby"
+        },
+        correct: "A"
+      },
+      {
+        question: "How long does it take your body to get rid of the alcohol from one standard drink?",
+        options: {
+          A: "4 hours",
+          B: "1 hour",
+          C: "3 hours",
+          D: "2 hours"
+        },
+        correct: "B"
+      },
+      {
+        question: "What must your blood alcohol level be under when you are driving a vehicle?",
+        options: {
+          A: "40mg/100ml",
+          B: "0.8mg/100ml",
+          C: "80mg/100ml",
+          D: "0.4mg/100ml"
+        },
+        correct: "C"
+      },
+      {
+        question: "When approaching a roundabout and you wish to go straight ahead, what signal should you use?",
+        options: {
+          A: "No signal required",
+          B: "Right on approach and left after the first exit",
+          C: "Left on approach and as you leave",
+          D: "No signal on approach and left after the first exit"
+        },
+        correct: "D"
+      },
+      {
+        question: "When approaching a major road ahead, what is the first thing you should do?",
+        options: {
+          A: "Slow down",
+          B: "Signal",
+          C: "Check the mirror",
+          D: "Change gear"
+        },
+        correct: "C"
+      },
+      {
+        question: "What is meant by the \"Two Second Rule\" (\"Only a fool breaks the two second rule\")?",
+        options: {
+          A: "The time it takes to drive away from a roundabout",
+          B: "The time it takes to drive away from traffic lights",
+          C: "How long it takes to start the vehicle",
+          D: "The safe distance between you and the vehicle in front"
+        },
+        correct: "D"
+      },
+      {
+        question: "There is a sudden shower of rain. What should you remember?",
+        options: {
+          A: "Braking distance will be reduced",
+          B: "Increase the tyre pressure",
+          C: "Decrease the tyre pressure",
+          D: "Braking distance will be increased"
+        },
+        correct: "D"
+      },
+      {
+        question: "When approaching a sharp bend, what should you do first?",
+        options: {
+          A: "Sound your horn",
+          B: "Slow down",
+          C: "Drive on the other side of the road",
+          D: "Signal"
+        },
+        correct: "B"
+      },
+      {
+        question: "What should you do before slowing down?",
+        options: {
+          A: "Change gear",
+          B: "Check your mirror",
+          C: "Signal",
+          D: "Brake gently"
+        },
+        correct: "B"
+      },
+      {
+        question: "When reversing in a narrow street and another vehicle approaches, what should you do?",
+        options: {
+          A: "Carry on reversing",
+          B: "Signal",
+          C: "Stop",
+          D: "Slow down"
+        },
+        correct: "C"
+      },
+      {
+        question: "When driving, where should you be looking?",
+        options: {
+          A: "Behind you",
+          B: "At the next vehicle",
+          C: "All around",
+          D: "At the road"
+        },
+        correct: "C"
+      },
+      {
+        question: "What is a safe speed?",
+        options: {
+          A: "The legal speed limit",
+          B: "A speed which allows you to stop safely",
+          C: "Keeping up with the vehicle in front",
+          D: "Any speed you like"
+        },
+        correct: "B"
+      },
+      {
+        question: "What light signals on a vehicle shows that a driver is slowing down?",
+        options: {
+          A: "Left signal",
+          B: "Right signal",
+          C: "Brake lights",
+          D: "Hazard lights"
+        },
+        correct: "C"
+      },
+      {
+        question: "When approaching a roundabout and you wish to take the road to the right, in which lane or side of the road should you be?",
+        options: {
+          A: "The right",
+          B: "The left",
+          C: "Any lane",
+          D: "The centre"
+        },
+        correct: "A"
+      },
+      {
+        question: "When can you park your vehicle on a pedestrian crossing?",
+        options: {
+          A: "Only to collect a passenger",
+          B: "Only to load",
+          C: "Never",
+          D: "Only at night"
+        },
+        correct: "C"
+      },
+      {
+        question: "You are emerging from a junction and a vehicle is approaching from the right is signalling left, what must you do?",
+        options: {
+          A: "Go immediately",
+          B: "Flash your light and go",
+          C: "Sound your horn and go",
+          D: "Wait"
+        },
+        correct: "D"
+      },
+      {
+        question: "What procedure should you follow when turning left at a roundabout?",
+        options: {
+          A: "Mirror, signal, manoeuvre",
+          B: "Signal, manoeuvre, signal",
+          C: "Signal, manoeuvre, mirror",
+          D: "Manoeuvre, mirror, signal"
+        },
+        correct: "A"
+      },
+      {
+        question: "What is the sequence of colours on traffic lights?",
+        options: {
+          A: "Red, amber, green, amber",
+          B: "Red, green, amber, red",
+          C: "Red, green and amber, green",
+          D: "Red, red and amber, green, amber"
+        },
+        correct: "D"
+      },
+      {
+        question: "Where should you not park or stop?",
+        options: {
+          A: "On a pedestrian crossing",
+          B: "On the left",
+          C: "In a one way street",
+          D: "In a car park"
+        },
+        correct: "A"
+      },
+      {
+        question: "When entering a new road and a pedestrian is crossing the road, who has priority?",
+        options: {
+          A: "Who gets there first",
+          B: "The car",
+          C: "The pedestrian",
+          D: "Nobody"
+        },
+        correct: "C"
+      },
+      {
+        question: "When is the only time you should sound the horn?",
+        options: {
+          A: "To a friend",
+          B: "To let others know that you are there",
+          C: "To a member of your family",
+          D: "To tell somebody off, for doing something wrong"
+        },
+        correct: "B"
+      },
+      {
+        question: "What extra care should be taken when overtaking pedestrians?",
+        options: {
+          A: "You must drive past quickly",
+          B: "You must drive on the other side of the road",
+          C: "No special care need to be taken",
+          D: "You must give them extra room"
+        },
+        correct: "D"
+      },
+      {
+        question: "Describe the sign meaning no entry?",
+        options: {
+          A: "Square with red background and white insert",
+          B: "Oblong with red background and white insert",
+          C: "Circular with red background and white insert",
+          D: "Triangular with red background and white insert"
+        },
+        correct: "C"
+      },
+      {
+        question: "Under what circumstances would you not go forward when the traffic lights are green?",
+        options: {
+          A: "You are lost",
+          B: "When you intend to turn right",
+          C: "When a pedestrian is crossing the road",
+          D: "When you intend to turn left"
+        },
+        correct: "C"
+      },
+      {
+        question: "What light signal would you use to indicate to the driver behind that you wish to stop on the left?",
+        options: {
+          A: "Brake lights",
+          B: "Right indicator",
+          C: "Left indicator",
+          D: "Hazard warning lights"
+        },
+        correct: "C"
+      },
+      {
+        question: "If you are travelling along a one way street, what lane should you use?",
+        options: {
+          A: "The left",
+          B: "The right",
+          C: "The centre",
+          D: "The most convenient"
+        },
+        correct: "D"
+      },
+      {
+        question: "What is the procedure for overtaking?",
+        options: {
+          A: "Signal, mirror, manoeuvre",
+          B: "Signal, manoeuvre, mirror",
+          C: "Mirror, signal, manoeuvre",
+          D: "Manoeuvre, mirror, signal"
+        },
+        correct: "C"
+      },
+      {
+        question: "When you see an emergency vehicle with flashing lights in your rear view mirror, you should?",
+        options: {
+          A: "Stop immediately",
+          B: "Do nothing",
+          C: "Speed up",
+          D: "Allow the vehicle to pass if possible"
+        },
+        correct: "D"
+      },
+      {
+        question: "How would you adjust your driving if you suspect that there was an accident ahead?",
+        options: {
+          A: "Speed up",
+          B: "Do nothing",
+          C: "Stop",
+          D: "Slow down"
+        },
+        correct: "D"
+      },
+      {
+        question: "When approaching a roundabout, who should you normally give way to?",
+        options: {
+          A: "Traffic on the right",
+          B: "Traffic on the left",
+          C: "Nobody",
+          D: "All traffic"
+        },
+        correct: "A"
+      },
+      {
+        question: "A blue rectangular sign with a white P means?",
+        options: {
+          A: "Petrol",
+          B: "Play area",
+          C: "Phone",
+          D: "Parking"
+        },
+        correct: "D"
+      },
+      {
+        question: "Where might you see a white zig zag line at the edge of the pavement?",
+        options: {
+          A: "A roundabout",
+          B: "A pedestrian crossing",
+          C: "A junction",
+          D: "Sharp bend"
+        },
+        correct: "C"
+      },
+      {
+        question: "Where must you never overtake?",
+        options: {
+          A: "On a bend",
+          B: "In a one way street",
+          C: "In Victoria",
+          D: "On a dual carriageway"
+        },
+        correct: "D"
+      },
+      {
+        question: "What daytime conditions require you to use your lights?",
+        options: {
+          A: "Going to work",
+          B: "Poor visibility",
+          C: "Leaving work",
+          D: "All the time"
+        },
+        correct: "D"
+      },
+      {
+        question: "What is the first thing you always do before moving off?",
+        options: {
+          A: "Signal",
+          B: "Get the biting/balance point",
+          C: "Open the driver's window",
+          D: "Look all around"
+        },
+        correct: "A"
+      },
+      {/////////////
+        question: "What is the age limit of a learner driver for Class 2 driving license?",
+        options: {
+          A: "21 years",
+          B: "15 years",
+          C: "18 years",
+          D: "16 years"
+        },
+        correct: "C"
+      },
+      {
+        question: "Which are the places where a driver should not use his horn?",
+        options: {
+          A: "In dense traffic",
+          B: "Country side",
+          C: "School, hospital, court",
+          D: "Cinema hall, dance hall"
+        },
+        correct: "C"
+      },
+      {
+        question: "What must you do when you see emergency light or you hear siren of an ambulance?",
+        options: {
+          A: "Keep going on your way",
+          B: "Make way for ambulance to pass as soon as possible",
+          C: "Increase your speed to go fast",
+          D: "Let the ambulance wait for you to pass"
+        },
+        correct: "B"
+      },
+      {
+        question: "To which Department one should apply to obtain a learner license?",
+        options: {
+          A: "Land Transport division",
+          B: "Licensing Authority",
+          C: "Seychelles Police",
+          D: "Ministry of National Development"
+        },
+        correct: "C"
+      },
+      {
+        question: "What is the function of foot brake in a vehicle?",
+        options: {
+          A: "To help change gear",
+          B: "To increase the speed of vehicle",
+          C: "To stop the vehicle when required",
+          D: "To move the vehicle from stationary position"
+        },
+        correct: "C"
+      },
+      {
+        question: "What is the maximum speed of a vehicle in a non built up area? (Apart from Palmist Avenue.)",
+        options: {
+          A: "75km",
+          B: "55km",
+          C: "80km",
+          D: "65km"
+        },
+        correct: "D"
+      },
+      {
+        question: "Which is the dual carriageway from the roads mentioned below?",
+        options: {
+          A: "Latanier Road",
+          B: "5th June Avenue",
+          C: "Independence Avenue",
+          D: "Francis Rachel Street"
+        },
+        correct: "C"
+      },
+      {
+        question: "Why should seat belts be used in a vehicle?",
+        options: {
+          A: "To secure the seat",
+          B: "To prevent the driver or passenger being thrown out of the seat in case of accident",
+          C: "To keep the driver comfortable",
+          D: "For safari purposes"
+        },
+        correct: "B"
+      },
+      {
+        question: "What does the amber traffic light mean?",
+        options: {
+          A: "Get ready to stop",
+          B: "Go if safe",
+          C: "Stop",
+          D: "Get ready to go"
+        },
+        correct: "C"
+      },
+      {
+        question: "You are following a moving vehicle at night, it is advisable to dim your headlamp. State why is this necessary?",
+        options: {
+          A: "To give you a better reflection on the road",
+          B: "To avoid the reflection blinding you",
+          C: "To avoid blinding the driver ahead",
+          D: "To keep a safe driving distance"
+        },
+        correct: "C"
+      },
+      {
+        question: "What is the maximum stopping or parking distance from the edge of the road?",
+        options: {
+          A: "1m",
+          B: "1.5m",
+          C: "0.9m",
+          D: "2m"
+        },
+        correct: "C"
+      },
+      {
+        question: "What does a double yellow line mean on the side of the road?",
+        options: {
+          A: "Parking permitted during the day only",
+          B: "Stop and wait for 20 minutes in any hour",
+          C: "Stop and flash your hazard lamps",
+          D: "Parking is prohibited"
+        },
+        correct: "D"
+      },
+      {
+        question: "Your electric indicator fails to function, what should you do?",
+        options: {
+          A: "Apply your hazard lamps",
+          B: "Give hand signals",
+          C: "Flash your head lamps",
+          D: "Use your warning/instrument (horn)"
+        },
+        correct: "B"
+      },
+      {
+        question: "If when driving with your emergency (hazard warning) light on, you want to turn left. How are you going to indicate to other drivers of your intention?",
+        options: {
+          A: "Just continue with your hazard warning light on",
+          B: "Put off your hazard warning light and put your right indicator on",
+          C: "Put your hand out of the window and turn it in a circle",
+          D: "Put your right indicator on"
+        },
+        correct: "C"
+      },
+      {
+        question: "What is the best time to drive?",
+        options: {
+          A: "The time that your body would be asleep",
+          B: "When there is the least traffic on the roads",
+          C: "The time when your body would normally be awake",
+          D: "When there is most traffic"
+        },
+        correct: "C"
+      },
+      {
+        question: "How long does it take your body to get rid of the alcohol from one standard drink?",
+        options: {
+          A: "4 hours",
+          B: "1 hour",
+          C: "3 hours",
+          D: "2 hours"
+        },
+        correct: "B"
+      },
+      {
+        question: "What must your blood alcohol level be under when you are driving a vehicle?",
+        options: {
+          A: "40mg/100ml",
+          B: "0.8mg/100ml",
+          C: "80mg/100ml",
+          D: "0.4mg/100ml"
+        },
+        correct: "C"
+      },
+      {
+        question: "When approaching a roundabout and you wish to go straight ahead. What signal should you use?",
+        options: {
+          A: "No signal required",
+          B: "Right on approach and left after the first exit",
+          C: "Left on approach and as you leave",
+          D: "No signal on approach and left after the first exit"
+        },
+        correct: "D"
+      },
+      {
+        question: "When approaching a major road ahead what is the first thing you should do?",
+        options: {
+          A: "Slow down",
+          B: "Signal",
+          C: "Check the mirror",
+          D: "Change gear"
+        },
+        correct: "C"
+      },////////////////////////////////////////////////////////////////////////
+      {
+        question: "When is it possible to park on the right hand side of the road?",
+        options: {
+          A: "Only at night",
+          B: "Never",
+          C: "When it is safe",
+          D: "Anytime"
+        },
+        correct: "B"
+      },
+      {
+        question: "What colour glass must the signal lamps be?",
+        options: {
+          A: "Clear glass",
+          B: "Red",
+          C: "Amber",
+          D: "Any colour"
+        },
+        correct: "C"
+      },
+      {
+        question: "When can you park at a bus stop?",
+        options: {
+          A: "Only to let somebody in the car",
+          B: "Never",
+          C: "Only at night",
+          D: "Anytime"
+        },
+        correct: "B"
+      },
+      {
+        question: "Why are some road signs in shape of a circle?",
+        options: {
+          A: "Warning",
+          B: "Information",
+          C: "Orders",
+          D: "Directions"
+        },
+        correct: "C"
+      },
+      {
+        question: "Why are some road signs in the shape of a triangle?",
+        options: {
+          A: "Warnings",
+          B: "Information",
+          C: "Orders",
+          D: "Directions"
+        },
+        correct: "A"
+      },
+      {
+        question: "If you are following a car and the driver puts his arm out of the window and moves it up and down, what is he telling you?",
+        options: {
+          A: "He is waving to you",
+          B: "He is seeing if it is raining",
+          C: "He intends to turn left",
+          D: "He intends to stop or slow down"
+        },
+        correct: "D"
+      },
+      {
+        question: "Where can you overtake?",
+        options: {
+          A: "Where the road narrows",
+          B: "Where there is a broken white line down the centre of the road",
+          C: "Where there is a single or double unbroken lines",
+          D: "Where you force another vehicle to slow down"
+        },
+        correct: "B"
+      },
+      {
+        question: "Can you park on the pavement or footpath?",
+        options: {
+          A: "Only at night",
+          B: "Never",
+          C: "If the road is narrow",
+          D: "Anytime"
+        },
+        correct: "B"
+      },
+      {
+        question: "Can you park on the brow of a hill?",
+        options: {
+          A: "Only at night",
+          B: "Anytime",
+          C: "Never",
+          D: "If the road is narrow"
+        },
+        correct: "C"
+      },
+      {
+        question: "When driving and you see a hire vehicle, why should you be extra careful?",
+        options: {
+          A: "The vehicle may be in poor condition",
+          B: "The driver may not be familiar with driving on the left hand side of the road",
+          C: "The driver may not have a licence",
+          D: "No extra care need be taken"
+        },
+        correct: "B"
+      },
+      {
+        question: "When overtaking pedal cycles, should you?",
+        options: {
+          A: "Sound your horn",
+          B: "Drive fast to get past",
+          C: "Give them extra room",
+          D: "Pass as close as possible"
+        },
+        correct: "C"
+      },
+      {
+        question: "Where there is no footpath, can you walk?",
+        options: {
+          A: "Single file only",
+          B: "2 abreast",
+          C: "Not at all",
+          D: "3 abreast"
+        },
+        correct: "A"
+      },
+      {
+        question: "When riding a pedal cycle, do traffic signs apply to you?",
+        options: {
+          A: "No",
+          B: "Yes",
+          C: "Not at night",
+          D: "Only if a policeman tells you"
+        },
+        correct: "B"
+      },
+      {
+        question: "When riding a pedal cycle, does the drink and driving law apply to you?",
+        options: {
+          A: "No",
+          B: "Yes",
+          C: "Sometimes",
+          D: "Only at night"
+        },
+        correct: "B"
+      },
+      {
+        question: "When driving through Victoria should you?",
+        options: {
+          A: "Drive faster",
+          B: "Stay in forth gear",
+          C: "Drive slower",
+          D: "Only slow down if somebody pulls out in front of you"
+        },
+        correct: "C"
+      },
+      {
+        question: "When overtaking a parked vehicle, should you?",
+        options: {
+          A: "Get as close as possible before overtaking",
+          B: "Overtake as soon as you get there",
+          C: "Do not get too close before overtaking",
+          D: "Sound your horn"
+        },
+        correct: "C"
+      },
+      {
+        question: "You are following a vehicle and the driver puts his arm out of the window and rotates it in a circle. What is he telling you?",
+        options: {
+          A: "I intend to turn right",
+          B: "I intend to turn left",
+          C: "I intend to slow down",
+          D: "I intend to stop"
+        },
+        correct: "B"
+      },
+      {
+        question: "When stopping by the side of the road, what should a driver do before opening his door?",
+        options: {
+          A: "Look in the mirror",
+          B: "Look over his shoulder",
+          C: "Not turn off their engine",
+          D: "Not turn off the headlights at night"
+        },
+        correct: "B"
+      },
+      {
+        question: "Why should you wear a 'Seat Belt' in the front seat of a car?",
+        options: {
+          A: "Because it's there",
+          B: "Because my driving instructor told me to",
+          C: "Because the car will not start",
+          D: "Because it's the law"
+        },
+        correct: "D"
+      },
+      {
+        question: "What does three yellow lines painted on the kerb mean?",
+        options: {
+          A: "No loading at weekends",
+          B: "No loading at anytime",
+          C: "No loading during the working week",
+          D: "No loading at night"
+        },
+        correct: "C"
+      },
+      {
+        question: "What does two yellow lines painted on the kerb mean?",
+        options: {
+          A: "No loading at any time",
+          B: "No loading at night",
+          C: "No loading during the working day",
+          D: "Loading only during the working day"
+        },
+        correct: "D"
+      },
+      {
+        question: "What does one yellow line painted on the kerb mean?",
+        options: {
+          A: "No loading at anytime",
+          B: "No loading at night",
+          C: "No loading during the working day",
+          D: "No loading at certain times during the working day"
+        },
+        correct: "C"
+      },
+      {
+        question: "When is the only time you can show a white light at the rear of the vehicle?",
+        options: {
+          A: "When a lamp cover is broken",
+          B: "When you are driving forwards",
+          C: "When you are reversing",
+          D: "When you are parked by the side of the road"
+        },
+        correct: "C"
+      },
+      {
+        question: "When approaching a pedestrian crossing and somebody is near the crossing. What should a driver not do?",
+        options: {
+          A: "Slow down",
+          B: "Give a hand signal",
+          C: "Get past quickly",
+          D: "Not stop if they step on the crossing"
+        },
+        correct: "C"
+      },
+      {
+        question: "Learner drivers can not drive faster than?",
+        options: {
+          A: "40km per hour",
+          B: "50km per hour",
+          C: "65km per hour",
+          D: "80km per hour"
+        },
+        correct: "D"
+      },
+      {
+        question: "You are approaching and see a red and amber indication. What should you do?",
+        options: {
+          A: "Go",
+          B: "Stop",
+          C: "Get ready to go",
+          D: "Get ready to stop"
+        },
+        correct: "B"
+      },
+      {
+        question: "Which occasion do you not always need to stop?",
+        options: {
+          A: "When approaching a give way sign",
+          B: "At a stop sign",
+          C: "Traffic Lights are red",
+          D: "At a pedestrian crossing when in use"
+        },
+        correct: "A"
+      },
+      {
+        question: "Which of these signs is not circular?",
+        options: {
+          A: "Priority over vehicles from opposite direction",
+          B: "No overtaking",
+          C: "No vehicles over height shown",
+          D: "School crossing patrol"
+        },
+        correct: "A"
+      },
+      {
+        question: "What would you prepare to do if the driver ahead signaled he wanted to turn left?",
+        options: {
+          A: "Pull out and go past",
+          B: "Slow down",
+          C: "Sound your horn",
+          D: "Flash your lights"
+        },
+        correct: "B"
+      },
+      {
+        question: "What particularly must you watch for when turning a corner?",
+        options: {
+          A: "Vehicle entering in front of you",
+          B: "Pedestrian crossing the road",
+          C: "Animals",
+          D: "Vehicles coming out"
+        },
+        correct: "B"
+      },
+      {
+        question: "Is it necessary for the lights of a vehicle to be working in daylight?",
+        options: {
+          A: "Yes",
+          B: "No",
+          C: "Sometimes",
+          D: "Only signals light"
+        },
+        correct: "A"
+      },
+      {
+        question: "How long after your driving license has expired can you drive?",
+        options: {
+          A: "One day",
+          B: "Not at all",
+          C: "One week",
+          D: "One month"
+        },
+        correct: "B"
+      },
+      {
+        question: "When is it easiest to judge speed and distance?",
+        options: {
+          A: "In rain",
+          B: "In fog",
+          C: "At night",
+          D: "In daylight"
+        },
+        correct: "D"
+      },
+      {
+        question: "What is a clearway?",
+        options: {
+          A: "A cleared field",
+          B: "A clear road",
+          C: "A place where you should not stop",
+          D: "A place where there is no speed limit"
+        },
+        correct: "C"
+      },
+      {
+        question: "When would you not increase your speed?",
+        options: {
+          A: "When being overtaken",
+          B: "Going down a hill",
+          C: "Going up a hill",
+          D: "Leaving a roundabout"
+        },
+        correct: "A"
+      },
+      {
+        question: "What is the rule of the road?",
+        options: {
+          A: "Keep to the right",
+          B: "Keep to the left",
+          C: "Go slow",
+          D: "Only drive in daylight"
+        },
+        correct: "B"
+      },
+      {
+        question: "Is it correct to approach a left hand bend well out to the right, so that you can see further ahead?",
+        options: {
+          A: "Yes",
+          B: "No",
+          C: "Sometimes",
+          D: "Only at night"
+        },
+        correct: "B"
+      },
+      {
+        question: "When slowing or stopping a vehicle do you use?",
+        options: {
+          A: "Gear",
+          B: "Hand brake",
+          C: "Brakes",
+          D: "Clutch"
+        },
+        correct: "C"
+      },
+      {
+        question: "Which of these signs is not a triangle?",
+        options: {
+          A: "Cross road",
+          B: "Roundabout",
+          C: "Hospital",
+          D: "T junction"
+        },
+        correct: "C"
+      },
+      {
+        question: "Which of these signs in not a triangle?",
+        options: {
+          A: "Loose chippings",
+          B: "No left turn",
+          C: "Low flying aircraft",
+          D: "Hump bridge"
+        },
+        correct: "B"
+      },
+      {
+        question: "Which of these signs is not a circle?",
+        options: {
+          A: "Give way",
+          B: "Minimum speed limit",
+          C: "No cycling",
+          D: "Maximum speed limit"
+        },
+        correct: "A"
+      },
+      {
+        question: "Which of these signs is not a rectangle?",
+        options: {
+          A: "Hospital",
+          B: "Parking place",
+          C: "One way traffic",
+          D: "Stop sign"
+        },
+        correct: "D"
+      },
+      {
+        question: "What does it mean if you see a blue rectangular sign with a white H in the centre?",
+        options: {
+          A: "Helicopters",
+          B: "Home for the elderly",
+          C: "Hospital",
+          D: "Hotel"
+        },
+        correct: "C"
+      },
+      {
+        question: "Which sign is not a triangle?",
+        options: {
+          A: "Uneven road",
+          B: "Crossroad",
+          C: "No vehicles",
+          D: "Bend to the right"
+        },
+        correct: "C"
+      },/////////////////////////////////////////////////////////////
+      {
+        question: "When driving along, on what part of the road generally, should you be?",
+        options: {
+          A: "The left",
+          B: "The centre",
+          C: "The right",
+          D: "Anywhere"
+        },
+        correct: "A"
+      },
+      {
+        question: "When driving at night, when should you use the full main beam headlights?",
+        options: {
+          A: "In Victoria",
+          B: "When no other road users will be dazzled",
+          C: "At all times",
+          D: "To tell another driver to dip his lights"
+        },
+        correct: "B"
+      },
+      {
+        question: "What is meant by the sign Clearway?",
+        options: {
+          A: "No overtaking",
+          B: "No entry",
+          C: "No stopping",
+          D: "Speed limit ends"
+        },
+        correct: "C"
+      },
+      {
+        question: "You are approaching a junction and there are continuous double white lines across the road, what do they mean?",
+        options: {
+          A: "Give way",
+          B: "You have priority",
+          C: "Stop",
+          D: "You can go"
+        },
+        correct: "C"
+      },
+      {
+        question: "Where must you never overtake?",
+        options: {
+          A: "Going up hill",
+          B: "On the flat",
+          C: "Going down hill",
+          D: "On the brow of a hill"
+        },
+        correct: "D"
+      },
+      {
+        question: "Which sign is not a circle?",
+        options: {
+          A: "No right turn",
+          B: "No left turn",
+          C: "Roundabout",
+          D: "No U turn"
+        },
+        correct: "C"
+      },
+      {
+        question: "Which sign is not blue in colour?",
+        options: {
+          A: "Minimum speed limit",
+          B: "Ahead only",
+          C: "One way traffic",
+          D: "School crossing patrol"
+        },
+        correct: "D"
+      },
+      {
+        question: "Which sign is a circle?",
+        options: {
+          A: "No vehicles",
+          B: "Traffic lights ahead",
+          C: "Roundabout",
+          D: "Crossroads"
+        },
+        correct: "A"
+      },
+      {
+        question: "Which sign is blue?",
+        options: {
+          A: "Ahead only",
+          B: "Bend to the right",
+          C: "Staggered junction",
+          D: "Uneven road"
+        },
+        correct: "A"
+      },
+      {
+        question: "Which sign is blue?",
+        options: {
+          A: "Minimum speed limit",
+          B: "School crossing patrol",
+          C: "Tourist information point",
+          D: "Maximum speed limit"
+        },
+        correct: "A"
+      },
+      {
+        question: "Who is allowed to park inside a yellow box painted on the road with the letter 'L' inside?",
+        options: {
+          A: "Learner drivers only",
+          B: "Buses",
+          C: "Long vehicles",
+          D: "Vehicles loading and unloading"
+        },
+        correct: "D"
+      },
+      {
+        question: "Which sign is not blue in colour?",
+        options: {
+          A: "Vehicles may pass either side",
+          B: "Keep left",
+          C: "Ahead only",
+          D: "Traffic merges from the left"
+        },
+        correct: "D"
+      },
+      {
+        question: "Which sign is not a triangle?",
+        options: {
+          A: "Low flying aircraft",
+          B: "No motor vehicles",
+          C: "Loose chippings",
+          D: "Falling rocks"
+        },
+        correct: "B"
+      },
+      {
+        question: "Which sign is not a triangle?",
+        options: {
+          A: "Quayside or river bank",
+          B: "Road works",
+          C: "No through road",
+          D: "Slippery road"
+        },
+        correct: "C"
+      },
+      {
+        question: "Which sign is mostly yellow in colour?",
+        options: {
+          A: "Parking place",
+          B: "Hospital",
+          C: "No parking or waiting",
+          D: "Clear way"
+        },
+        correct: "C"
+      },
+      {
+        question: "Which sign is a circle with red in the outside blue in the centre with a red diagonal line?",
+        options: {
+          A: "Clearway",
+          B: "No waiting",
+          C: "Minimum speed limit",
+          D: "No entry"
+        },
+        correct: "B"
+      },
+      {
+        question: "Which sign is a triangle?",
+        options: {
+          A: "Slippery road",
+          B: "No motor vehicles",
+          C: "No waiting",
+          D: "Minimum speed limit"
+        },
+        correct: "A"
+      },
+      {
+        question: "Which sign is a circle?",
+        options: {
+          A: "Dual carriageway ends",
+          B: "Slippery road",
+          C: "Lorries prohibited",
+          D: "Hospital"
+        },
+        correct: "C"
+      },
+      {
+        question: "Which sign is a circle?",
+        options: {
+          A: "Traffic lights",
+          B: "Hump bridge",
+          C: "End of minimum speed limit",
+          D: "Uneven road"
+        },
+        correct: "C"
+      },
+      {
+        question: "A no entry sign does not apply to?",
+        options: {
+          A: "Cycles",
+          B: "Pedestrians",
+          C: "Motor cars",
+          D: "Motor cycles"
+        },
+        correct: "B"
+      }       
+    ];
+
+    // Function to get random questions
+    const getRandomQuestions = (questions, num) => {
+      const shuffled = [...questions].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, num);
+    };
+
+    // Initialize with 25 random questions
+    let currentQuestions = getRandomQuestions(allQuestions, 25);
+
+    const renderQuiz = () => {
+      const quizDiv = document.getElementById("quiz");
+      quizDiv.innerHTML = "";
+      currentQuestions.forEach((q, index) => {
+        const questionDiv = document.createElement("div");
+        questionDiv.classList.add("question");
+
+        const qText = document.createElement("p");
+        qText.textContent = `${index + 1}. ${q.question}`;
+        questionDiv.appendChild(qText);
+
+        for (const [key, value] of Object.entries(q.options)) {
+          const label = document.createElement("label");
+          label.innerHTML = `
+            <input type="radio" name="q${index}" value="${key}">
+            ${key}. ${value}
+          `;
+          questionDiv.appendChild(label);
+          questionDiv.appendChild(document.createElement("br"));
+        }
+
+        quizDiv.appendChild(questionDiv);
+      });
+    };
+
+    // Initial render
+    renderQuiz();
+
+    document.getElementById("submitBtn").addEventListener("click", () => {
+      let score = 0;
+      currentQuestions.forEach((q, index) => {
+        const selected = document.querySelector(`input[name="q${index}"]:checked`);
+        const questionContainer = document.querySelectorAll(".question")[index];
+
+        // Clear old corrections and highlights
+        questionContainer.classList.remove("correct-answer", "wrong-answer");
+        const oldCorrection = questionContainer.querySelector(".correction");
+        if (oldCorrection) oldCorrection.remove();
+
+        if (selected && selected.value === q.correct) {
+          score++;
+          questionContainer.classList.add("correct-answer");
+        } else {
+          if (selected) {
+            questionContainer.classList.add("wrong-answer");
+          }
+
+          const correctKey = q.correct;
+          const correctText = q.options[correctKey];
+          const correctionEl = document.createElement("p");
+          correctionEl.className = "correction";
+          correctionEl.innerHTML = `Correct answer: <strong>${correctKey}. ${correctText}</strong>`;
+          questionContainer.appendChild(correctionEl);
+        }
+      });
+
+      document.getElementById("score").innerText = `You scored ${score} out of ${currentQuestions.length}`;
+      document.getElementById("submitBtn").style.display = "none";
+      document.getElementById("nextQuizBtn").style.display = "inline-block";
+    });
+
+    document.getElementById("nextQuizBtn").addEventListener("click", () => {
+      // Get new random set of 25 questions
+      currentQuestions = getRandomQuestions(allQuestions, 25);
+      renderQuiz();
+      document.getElementById("score").innerText = "";
+      document.getElementById("submitBtn").style.display = "inline-block";
+      document.getElementById("nextQuizBtn").style.display = "none";
+    });
+  </script>
+</body>
+</html>
